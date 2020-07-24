@@ -63,4 +63,27 @@ public class BasicEntityDiffExample {
     System.out.println("");
     System.out.println(javers.getJsonConverter().toJson(diff));
   }
+
+  @Test
+  public void shouldCompareNewValueObject() {
+    //given
+    Javers javers = JaversBuilder.javers()
+                                 .withListCompareAlgorithm(LEVENSHTEIN_DISTANCE)
+                                 .build();
+
+    Employee frodoOld = EmployeeBuilder.Employee("Frodo").build();
+
+    Employee frodoNew = EmployeeBuilder.Employee("Frodo")
+                                       .withPrimaryAddress(new Address("Mordor", "Mountain av."))
+                                       .build();
+
+    //when
+    Diff diff = javers.compare(frodoOld, frodoNew);
+
+    //then
+    assertThat(diff.getChanges()).hasSize(2);
+
+    // diff pretty print
+    System.out.println(diff);
+  }
 }
